@@ -1,37 +1,83 @@
 # Prueba_Selenium
-Se realiza la importancion de las librerias a utilizar, ademas de que en el proyecto se descarga el controlador que utiliza Selenium para ejecutar Chrome desde la pagina "https://sites.google.com/chromium.org/driver/getting-started".
+Se utiliza Selenium para automatizar la extracción de frases, autores y etiquetas (tags) desde una página web. Los datos extraídos son posteriormente almacenados en una base de datos MySQL.
+
+Requisitos
+
+Python 3.x
+
+Google Chrome instalado
+
+ChromeDriver
+ (descargado y compatible con tu versión de Chrome)
+
+Librerías de Python:
+
+selenium
+
+mysql-connector-python
+
+Instalación
+
+Instala las dependencias necesarias:
+
+pip install selenium mysql-connector-python
+
+
+Se descarga el controlador de Chrome (ChromeDriver) desde el siguiente enlace:
+https://sites.google.com/chromium.org/driver/getting-started
+
+
+Funcionamiento
+
+Se importan las siguientes librerías en el script:
 
 from selenium import webdriver
-
 from selenium.webdriver.common.by import By
-
 from selenium.webdriver.chrome.service import Service
-
 from time import sleep
-
-driver = webdriver.Chrome()
-
 import mysql.connector
 
 
-Se ejecuta el controlador para que habra automaticamente el navegador y se empizan a recibir los datos de la frase, autor y tags por medio de los Scripts
-texto = q.find_element(By.CSS_SELECTOR,value='span[class="text"]').text
+Se inicializa el controlador de Chrome con Selenium:
 
-    autor = q.find_element(By.CSS_SELECTOR,'small[class="author"]').text
+driver = webdriver.Chrome()
 
-    etiqueta = q.find_elements(By.CSS_SELECTOR,'a[class="tag"]')
 
-esta ejecucion se hace 9 veces por los elementos que hay en la pagina, luego se utiliza la linea de codigo
+Se accede a la página objetivo y se extraen los siguientes datos para cada frase:
 
-boton = driver.find_element(By.CSS_SELECTOR, value='a[href="/page/2/"]')
+Texto de la frase:
 
+texto = q.find_element(By.CSS_SELECTOR, 'span[class="text"]').text
+
+
+Autor:
+
+autor = q.find_element(By.CSS_SELECTOR, 'small[class="author"]').text
+
+
+Etiquetas:
+
+etiqueta = q.find_elements(By.CSS_SELECTOR, 'a[class="tag"]')
+
+
+El proceso se repite 9 veces (una por cada elemento en la página).
+
+Para navegar a la siguiente página, se hace clic en el botón de paginación:
+
+boton = driver.find_element(By.CSS_SELECTOR, 'a[href="/page/2/"]')
 boton.click()
 
-para actualizar la pagina al siguiente ventana y se toman los otros 9 elementos que esta contiene.
-Una vez hecho, se cierra el proceso de Selenium para subir la informacion a la base de datos.
-Se crea la base de datos prueba con una tabla de "frases_pagina" donde contiene 4 columnas
-ID
-Frase:
-Autor:
-Tag:
-una vez subido la base de datos se actualiza y queda la informacion isertada en la tabla
+
+Se repite el proceso de recolección de datos en la nueva página.
+
+Una vez finalizado el scraping, se cierra el navegador controlado por Selenium.
+
+# Base de Datos
+
+Se crea una base de datos llamada prueba.
+
+Dentro de esta base de datos, se crea la tabla frases_pagina con las siguientes columnas:
+
+ID	Frase	Autor	Tag
+
+Los datos recopilados son insertados en esta tabla utilizando mysql-connector-python.
